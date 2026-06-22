@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maesteg School - Breaktime Gaming Petition</title>
+    <style>
+        /* Modern, Clean Design Styles */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        body {
+            background: #f0f2f5;
+            color: #333;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .container {
+            background: #ffffff;
+            max-width: 650px;
+            width: 100%;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        .header {
+            background: #0056b3; 
+            color: #ffffff;
+            padding: 25px;
+            text-align: center;
+        }
+        .header h1 {
+            font-size: 24px;
+            margin-bottom: 8px;
+        }
+        .header p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+        .content {
+            padding: 25px;
+        }
+        .petition-box {
+            background: #f8f9fa;
+            border-left: 4px solid #0056b3;
+            padding: 15px;
+            margin-bottom: 25px;
+            font-size: 14px;
+            line-height: 1.5;
+            color: #555;
+            border-radius: 0 4px 4px 0;
+        }
+        .counter-box {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #e7f1ff;
+            color: #0c5460;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            font-weight: bold;
+        }
+        .counter-num {
+            font-size: 24px;
+            color: #0056b3;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            font-size: 14px;
+        }
+        input[type="text"], select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ced4da;
+            border-radius: 6px;
+            font-size: 16px;
+            transition: border-color 0.2s;
+        }
+        input[type="text"]:focus, select:focus {
+            outline: none;
+            border-color: #0056b3;
+        }
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 14px;
+            background: #28a745;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s;
+            margin-bottom: 15px;
+        }
+        .btn:hover {
+            background: #218838;
+        }
+        .btn-download {
+            background: #6c757d;
+        }
+        .btn-download:hover {
+            background: #5a6268;
+        }
+        .recent-votes {
+            margin-top: 25px;
+            border-top: 1px solid #dee2e6;
+            padding-top: 20px;
+        }
+        .recent-votes h3 {
+            font-size: 16px;
+            margin-bottom: 12px;
+            color: #495057;
+        }
+        .vote-list {
+            list-style: none;
+            max-height: 200px;
+            overflow-y: auto;
+            border: 1px solid #dee2e6;
+            border-radius: 6px;
+            padding: 10px;
+            background: #fafafa;
+        }
+        .vote-list li {
+            padding: 8px 5px;
+            border-bottom: 1px solid #eee;
+            font-size: 14px;
+            display: flex;
+            justify-content: space-between;
+        }
+        .vote-list li:last-child {
+            border-bottom: none;
+        }
+        .vote-timestamp {
+            color: #888;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <h1>Maesteg School Student Petition</h1>
+        <p>Proposal to Unblock Educational & Casual Games During Breaktimes</p>
+    </div>
+
+    <div class="content">
+        <div class="petition-box">
+            <strong>Our Case:</strong> We, the students of Maesteg School, respectfully request that the school IT department unblock specific, safe online games exclusively during morning and lunch breaktimes. We believe responsible gaming offers a positive mental break between lessons and helps build digital skills.
+        </div>
+
+        <div class="counter-box">
+            <span>Total Signatures Collected:</span>
+            <span class="counter-num" id="totalCount">0</span>
+        </div>
+
+        <form id="voteForm" onsubmit="submitVote(event)">
+            <div class="form-group">
+                <label for="studentName">Full Name:</label>
+                <input type="text" id="studentName" placeholder="e.g. John Doe" required autocomplete="off">
+            </div>
+
+            <div class="form-group">
+                <label for="yearGroup">Year Group:</label>
+                <select id="yearGroup" required>
+                    <option value="" disabled selected>Select your Year Group</option>
+                    <option value="Year 7">Year 7</option>
+                    <option value="Year 8">Year 8</option>
+                    <option value="Year 9">Year 9</option>
+                    <option value="Year 10">Year 10</option>
+                    <option value="Year 11">Year 11</option>
+                    <option value="Sixth Form">Sixth Form (Year 12/13)</option>
+                </select>
+            </div>
+
+            <button type="submit" class="btn">✍️ Sign the Petition</button>
+        </form>
+
+        <button class="btn btn-download" onclick="downloadCSV()">💾 Download Signature List (CSV)</button>
+        
+        <div class="recent-votes">
+            <h3>Recent Signatures:</h3>
+            <ul class="vote-list" id="voteList"></ul>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Load existing signatures from localStorage when the app boots up, or start empty
+    let signatures = JSON.parse(localStorage.getItem('maesteg_signatures')) || [];
+
+    // Immediately show saved records on layout boot
+    updateUI();
+
+    function submitVote(event) {
+        event.preventDefault();
+        
+        const nameInput = document.getElementById('studentName');
+        const yearSelect = document.getElementById('yearGroup');
+        
+        const name = nameInput.value.trim();
+        const year = yearSelect.value;
+        const timestamp = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+
+        if (name === "" || !year) return;
+
+        // Duplicate Check 
+        const isDuplicate = signatures.some(sig => sig.name.toLowerCase() === name.toLowerCase() && sig.year === year);
+        if (isDuplicate) {
+            alert("This name has already signed the petition!");
+            return;
+        }
+
+        // Add context to array stack
+        signatures.unshift({ name, year, timestamp });
+
+        // Push data permanently to the browser memory
+        localStorage.setItem('maesteg_signatures', JSON.stringify(signatures));
+
+        updateUI();
+
+        // Clear local entry fields for next user
+        nameInput.value = "";
+        yearSelect.selectedIndex = 0;
+    }
+
+    function updateUI() {
+        document.getElementById('totalCount').innerText = signatures.length;
+        
+        const listContainer = document.getElementById('voteList');
+        listContainer.innerHTML = "";
+
+        signatures.forEach(sig => {
+            const li = document.createElement('li');
+            li.innerHTML = `<span><strong>${escapeHTML(sig.name)}</strong> (${sig.year})</span> <span class="vote-timestamp">${sig.timestamp}</span>`;
+            listContainer.appendChild(li);
+        });
+    }
+
+    function escapeHTML(str) {
+        return str.replace(/[&<>'"]/g, 
+            tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag)
+        );
+    }
+
+    function downloadCSV() {
+        if (signatures.length === 0) {
+            alert("No signatures to download yet!");
+            return;
+        }
+        let csvContent = "data:text/csv;charset=utf-8,Name,Year Group,Timestamp\n";
+        signatures.forEach(sig => {
+            let safeName = sig.name.replace(/,/g, ""); 
+            csvContent += `"${safeName}","${sig.year}","${sig.timestamp}"\n`;
+        });
+        const encodedUri = encodeURI(csvContent);
+        const link = document.createElement("a");
+        link.setAttribute("href", encodedUri);
+        link.setAttribute("download", "Maesteg_Games_Petition_Results.csv");
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
+</script>
+
+</body>
+</html>
